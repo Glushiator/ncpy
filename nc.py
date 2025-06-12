@@ -1,4 +1,4 @@
-#!/usr/bin/python
+#!/usr/bin/env python3
 
 #
 # starting code taken from:
@@ -64,7 +64,7 @@ class UnbufferedNonBlockingStream(object):
                 raise NetCatError("ERROR: writing to pipe: %d" % self.fd)
             block = data[total:total+WRITE_SIZE]
             written = os.write(self.fd, block)
-            debug("wrote to %d(%d): %d bytes [%d/%d]: %s" % (self.fd, self.fds, written, total, len(data), block[:written].encode("hex")))
+            debug("wrote to %d(%d): %d bytes [%d/%d]: %s" % (self.fd, self.fds, written, total, len(data), block[:written].hex()))
             total += written
 
     def flush(self):
@@ -92,7 +92,7 @@ class NetTool(object):
         self.connect_socket()
         try:
             self.forward_data()
-        except NetCatError, e:
+        except NetCatError as e:
             errout("ERROR: %s" % str(e))
 
     def parse_options(self):
@@ -193,14 +193,14 @@ class NetTool(object):
                     try:
                         buf = socket_recv(BLOCK_SIZE)
                         if not buf:
+                            conn_socket.shutdown(socket.SHUT_RDWR)
                             conn_socket.close()
-                            conn_socket.shutdown()
                             return
                         stdout_write(buf)
                         stdout_flush()
                         debug("read from remote %d bytes" % len(buf))
-                    except socket.error, e:
-                        print e
+                    except socket.error as e:
+                        print(e)
                 if read_fd is stdin:
                     block = stdin_read(BLOCK_SIZE)
                     if not block:
@@ -208,8 +208,8 @@ class NetTool(object):
                     try:
                         socket_sendall(block)
                     except socket.error:
+                        conn_socket.shutdown(socket.SHUT_RDWR)
                         conn_socket.close()
-                        conn_socket.shutdown()
                         raise NetCatError("send failed, connection closed by remote")
                     debug("sent to remote %d bytes" % len(block))
 

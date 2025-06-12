@@ -1,6 +1,6 @@
 # ncpy
 
-Simple tcp netcat clone in python for use as a ProxyCommand in ssh.
+Simple TCP netcat clone in Python for use as a ProxyCommand in ssh. Requires Python 3.
 
 Initial code was taken from http://4thmouse.com/index.php/2008/02/22/netcat-clone-in-three-languages-part-ii-python/
 
